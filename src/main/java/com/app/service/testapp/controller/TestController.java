@@ -12,4 +12,9 @@ public class TestController {
     public ResponseEntity<String> display() {
         return ResponseEntity.ok("Hello World");
     }
+
+    @RequestMapping("/display2")
+    public ResponseEntity<String> display2() {
+        return ResponseEntity.ok("Hello World 2");
+    }
 }
