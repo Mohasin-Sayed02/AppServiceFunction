@@ -25,7 +25,7 @@ jobs:
         with:
           registry: ${{ vars.REGISTRY_SOURCE }}
           username: ${{ vars.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_TOKEN }}
+          password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
 
       - name: Build and push container image to registry
         uses: docker/build-push-action@v3
