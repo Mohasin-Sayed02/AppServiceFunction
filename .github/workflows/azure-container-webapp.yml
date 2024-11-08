@@ -38,6 +38,7 @@ jobs:
       - name: Build and Push to ACR
         uses: docker/build-push-action@v2
         with:
+          context: .
           push: true
           tags: '${{vars.DOCKER_IMAGE_NAME}}:${{ github.run_number }}, ${{vars.DOCKER_IMAGE_NAME}}:latest'
           file: Dockerfile
