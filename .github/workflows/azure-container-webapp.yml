@@ -6,6 +6,8 @@ on:
       - master
   workflow_dispatch:
 
+env:
+  DOCKER_IMAGE: '${{ vars.REGISTRY_SOURCE }}/${{ vars.AZURE_USERNAME }}/${{ vars.REGISTRY_IMAGE }}'
 
 jobs:
 
@@ -40,5 +42,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: '${{vars.DOCKER_IMAGE_NAME}}:${{ github.run_number }}, ${{vars.DOCKER_IMAGE_NAME}}:latest'
+          tags: '${{env.DOCKER_IMAGE}}:${{ github.run_number }}, ${{env.DOCKER_IMAGE}}:latest'
           file: Dockerfile
