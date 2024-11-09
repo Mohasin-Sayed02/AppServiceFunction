@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  spring.application.name: "testapp"
+  app.environment: "production"
+  app.logLevel: "INFO"
