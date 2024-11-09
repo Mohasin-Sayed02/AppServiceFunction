@@ -68,10 +68,10 @@ jobs:
       - name: Update Image Tag in Deployment File
         run: |
           sed -i "s|\${IMAGE_TAG}|${{ github.run_number }}|g" deploy/deployment.template.yml
-        env:
-          REGISTRY_SOURCE: ${{ vars.REGISTRY_SOURCE }}
-          AZURE_USERNAME: ${{ vars.AZURE_USERNAME }}
-          REGISTRY_IMAGE: ${{ vars.REGISTRY_IMAGE }}
+          sed -i "s|\${REGISTRY_SOURCE}|${{ vars.REGISTRY_SOURCE }}|g" deploy/deployment.template.yml
+          sed -i "s|\${AZURE_USERNAME}|${{ vars.AZURE_USERNAME }}|g" deploy/deployment.template.yml
+          sed -i "s|\${REGISTRY_IMAGE}|${{ vars.REGISTRY_IMAGE }}|g" deploy/deployment.template.yml
+          
 
       - name: Apply ConfigMap and Deployment
         run: |
