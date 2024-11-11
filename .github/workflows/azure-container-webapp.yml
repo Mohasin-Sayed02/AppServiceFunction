@@ -65,7 +65,7 @@ jobs:
           cluster-name: ${{ vars.AKS_CLUSTER_NAME }}
           resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
 
-      - name: Update Image Tag in Deployment File
+      - name: Update Image Tag in Deployment Files
         run: |
           sed -i "s|\${IMAGE_TAG}|${{ github.run_number }}|g" deploy/deployment.template.yml
           sed -i "s|\${REGISTRY_SOURCE}|${{ vars.REGISTRY_SOURCE }}|g" deploy/deployment.template.yml
