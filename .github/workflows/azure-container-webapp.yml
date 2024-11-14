@@ -77,5 +77,5 @@ jobs:
       run: |
         kubectl apply -f deploy/configmap.yml
         kubectl apply -f deploy/secrets.yml
-        kubectl apply -f deploy/deployment.yml
+        kubectl apply -f deploy/deployment.template.yml
         kubectl apply -f deploy/service.template.yml
