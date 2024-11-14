@@ -49,11 +49,11 @@ jobs:
         DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
       run: |
         # Replace placeholders in ConfigMap
-        envsubst < deploy/configmap-template.yml > deploy/configmap.yml
+        envsubst < deploy/configmap.template.yml > deploy/configmap.yml
         cat deploy/configmap.yml
 
         # Replace placeholders in Secrets
-        envsubst < deploy/secrets-template.yml > deploy/secrets.yml
+        envsubst < deploy/secrets.template.yml > deploy/secrets.yml
         cat deploy/secrets.yml
 
     # Apply Kubernetes manifests
@@ -61,5 +61,5 @@ jobs:
       run: |
         kubectl apply -f deploy/configmap.yml
         kubectl apply -f deploy/secrets.yml
-        kubectl apply -f deploy/deployment.yml
-        kubectl apply -f deploy/service.yml
+        kubectl apply -f deploy/deployment.template.yml
+        kubectl apply -f deploy/service.template.yml
