@@ -14,9 +14,9 @@ spec:
     spec:
       containers:
         - name: testapp
-          image: ${{ secrets.AZURE_CONTAINER_REGISTRY }}/testapp:latest
+          image: ${{ vars.AZURE_CONTAINER_REGISTRY }}/testapp:<IMAGE_TAG>
           ports:
-            - containerPort: 8081
+            - containerPort: 8080
           envFrom:
             - configMapRef:
                 name: testapp-config

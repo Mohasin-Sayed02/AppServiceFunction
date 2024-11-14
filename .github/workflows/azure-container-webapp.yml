@@ -37,9 +37,11 @@ jobs:
 
     # Build and push Docker image to ACR
     - name: Build and Push Docker Image
+      env:
+        IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build -t ${{ vars.AZURE_CONTAINER_REGISTRY }}/testapp:latest .
-        docker push ${{ vars.AZURE_CONTAINER_REGISTRY }}/testapp:latest
+        docker build -t ${{ vars.AZURE_CONTAINER_REGISTRY }}/testapp:${{ github.sha }} .
+        docker push ${{ vars.AZURE_CONTAINER_REGISTRY }}/testapp:${{ github.sha }}
 
     # Generate ConfigMap and Secrets dynamically using environment variables
     - name: Generate ConfigMap and Secrets
@@ -56,6 +58,13 @@ jobs:
         envsubst < deploy/secrets.template.yml > deploy/secrets.yml
         cat deploy/secrets.yml
 
+    - name: Update Image Tag in Deployment Manifest
+      env:
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        sed -i "s|<IMAGE_TAG>|${IMAGE_TAG}|g" deploy/deployment.yml
+        cat deploy/deployment.yml
+
     #Authentication with AKS
     - name: Set up kubectl
       uses: azure/aks-set-context@v1
@@ -69,5 +78,5 @@ jobs:
       run: |
         kubectl apply -f deploy/configmap.yml
         kubectl apply -f deploy/secrets.yml
-        kubectl apply -f deploy/deployment.template.yml
+        kubectl apply -f deploy/deployment.yml
         kubectl apply -f deploy/service.template.yml
