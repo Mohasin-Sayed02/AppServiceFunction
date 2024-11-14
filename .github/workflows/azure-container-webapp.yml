@@ -8,6 +8,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment: PROD
 
     steps:
     # Checkout the repository
@@ -46,10 +47,9 @@ jobs:
     # Check environment variables
     - name: Check environment variables
       run: |
-        echo "DATABASE_URL=${{ env.DATABASE_URL }}
+        echo "DATABASE_URL=${{ vars.DATABASE_URL }}
         echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}"
         echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}"
-        echo ${{ secrets.DATABASE_PASSWORD }}
 
 
     # Generate ConfigMap and Secrets dynamically using environment variables
