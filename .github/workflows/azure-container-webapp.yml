@@ -44,14 +44,6 @@ jobs:
         docker build --platform linux/arm64 -t ${{ vars.AZURE_CONTAINER_REGISTRY }}/testapp:${{ github.sha }} .
         docker push ${{ vars.AZURE_CONTAINER_REGISTRY }}/testapp:${{ github.sha }}
 
-    # Check environment variables
-    - name: Check environment variables
-      run: |
-        echo "DATABASE_URL=${{ vars.DATABASE_URL }}
-        echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}"
-        echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}"
-
-
     # Generate ConfigMap and Secrets dynamically using environment variables
     - name: Generate ConfigMap and Secrets
       env:
@@ -67,6 +59,7 @@ jobs:
         envsubst < deploy/secrets.template.yml > deploy/secrets.yml
         cat deploy/secrets.yml
 
+    # Update Image Tag in Deployment Manifest
     - name: Update Image Tag in Deployment Manifest
       env:
         IMAGE_TAG: ${{ github.sha }}
