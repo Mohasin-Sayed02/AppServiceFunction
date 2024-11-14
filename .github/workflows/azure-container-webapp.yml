@@ -47,7 +47,7 @@ jobs:
     # Generate ConfigMap and Secrets dynamically using environment variables
     - name: Generate ConfigMap and Secrets
       env:
-        DATABASE_URL: ${{ env.DATABASE_URL }}
+        DATABASE_URL: ${{ vars.DATABASE_URL }}
         DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
         DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
       run: |
