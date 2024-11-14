@@ -61,8 +61,11 @@ jobs:
     - name: Update Image Tag in Deployment Manifest
       env:
         IMAGE_TAG: ${{ github.sha }}
+        CONTAINER_REGISTRY: ${{ vars.AZURE_CONTAINER_REGISTRY }}
       run: |
         sed -i "s|<IMAGE_TAG>|${IMAGE_TAG}|g" deploy/deployment.template.yml
+        sed -i "s|<CONTAINER_REGISTRY>|${CONTAINER_REGISTRY}|g" deploy/deployment.template.yml
+        
 
     #Authentication with AKS
     - name: Set up kubectl

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: testapp
-          image: ${{ vars.AZURE_CONTAINER_REGISTRY }}/testapp:<IMAGE_TAG>
+          image: <CONTAINER_REGISTRY>/testapp:<IMAGE_TAG>
           ports:
             - containerPort: 8080
           envFrom:
