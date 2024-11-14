@@ -1,8 +1,13 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: app-config
+  name: testapp-config
 data:
-  spring.application.name: "testapp"
-  app.environment: "production"
-  app.logLevel: "INFO"
+  SPRING_APPLICATION_NAME: "testapp"
+  APP_ENVIRONMENT: "production"
+  APP_LOGLEVEL: "INFO"
+  SERVER_PORT: "8080"
+  SPRING_DATASOURCE_URL: "${DATABASE_URL}" # Placeholder for database URL
+  SPRING_JPA_DATABASE_PLATFORM: "org.hibernate.dialect.SQLServer2012Dialect"
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+  SPRING_DATASOURCE_DRIVERCLASSNAME: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
