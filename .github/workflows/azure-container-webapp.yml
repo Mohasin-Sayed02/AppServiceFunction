@@ -40,7 +40,7 @@ jobs:
       env:
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build -t ${{ vars.AZURE_CONTAINER_REGISTRY }}/testapp:${{ github.sha }} .
+        docker build --platform linux/arm64 -t ${{ vars.AZURE_CONTAINER_REGISTRY }}/testapp:${{ github.sha }} .
         docker push ${{ vars.AZURE_CONTAINER_REGISTRY }}/testapp:${{ github.sha }}
 
     # Generate ConfigMap and Secrets dynamically using environment variables
