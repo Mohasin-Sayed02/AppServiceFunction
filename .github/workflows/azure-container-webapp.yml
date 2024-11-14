@@ -84,3 +84,8 @@ jobs:
         kubectl apply -f deploy/secrets.yml
         kubectl apply -f deploy/deployment.template.yml
         kubectl apply -f deploy/service.template.yml
+
+    # Wait for Deployment to complete
+    - name: Wait for Deployment
+      run: |
+        kubectl rollout status deployment/testapp
