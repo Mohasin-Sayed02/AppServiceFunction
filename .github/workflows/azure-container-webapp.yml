@@ -1,79 +1,64 @@
-name: Build, push and deploy container app to Azure Web App
+name: Build and Deploy to AKS
 
 on:
   push:
     branches:
       - master
-  workflow_dispatch:
-
-env:
-  DOCKER_IMAGE: '${{ vars.REGISTRY_SOURCE }}/${{ vars.AZURE_USERNAME }}/${{ vars.REGISTRY_IMAGE }}'
 
 jobs:
-
-  build-and-push:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+    # Checkout the repository
+    - name: Checkout Code
+      uses: actions/checkout@v3
 
-      - name: Set up JDK 23
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '23'
+    # Set up JDK
+    - name: Set up JDK 23
+      uses: actions/setup-java@v3
+      with:
+        java-version: 23
 
-      - name: Build with Maven
-        run: mvn clean package
+    # Build the application
+    - name: Build Application
+      run: ./mvnw clean package
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+    # Log in to Azure CLI
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Log in to container registry
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ vars.REGISTRY_SOURCE }}
-          username: ${{ vars.REGISTRY_USERNAME }}
-          password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
+    # Log in to Azure Container Registry
+    - name: Log in to ACR
+      run: az acr login --name ${{ secrets.AZURE_CONTAINER_REGISTRY }}
 
+    # Build and push Docker image to ACR
+    - name: Build and Push Docker Image
+      run: |
+        docker build -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/testapp:latest .
+        docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/testapp:latest
 
-      - name: Build and Push to ACR
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          tags: '${{env.DOCKER_IMAGE}}:${{ github.run_number }}, ${{env.DOCKER_IMAGE}}:latest'
-          file: Dockerfile
+    # Generate ConfigMap and Secrets dynamically using environment variables
+    - name: Generate ConfigMap and Secrets
+      env:
+        DATABASE_URL: ${{ env.DATABASE_URL }}
+        DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+        DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+      run: |
+        # Replace placeholders in ConfigMap
+        envsubst < deploy/configmap-template.yml > deploy/configmap.yml
+        cat deploy/configmap.yml
 
-  deploy-to-aks:
-    needs: build-and-push
-    runs-on: ubuntu-latest
+        # Replace placeholders in Secrets
+        envsubst < deploy/secrets-template.yml > deploy/secrets.yml
+        cat deploy/secrets.yml
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Set up kubectl
-        uses: azure/aks-set-context@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-          cluster-name: ${{ vars.AKS_CLUSTER_NAME }}
-          resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
-
-      - name: Update Image Tag in Deployment Files
-        run: |
-          sed -i "s|\${IMAGE_TAG}|${{ github.run_number }}|g" deploy/deployment.template.yml
-          sed -i "s|\${REGISTRY_SOURCE}|${{ vars.REGISTRY_SOURCE }}|g" deploy/deployment.template.yml
-          sed -i "s|\${AZURE_USERNAME}|${{ vars.AZURE_USERNAME }}|g" deploy/deployment.template.yml
-          sed -i "s|\${REGISTRY_IMAGE}|${{ vars.REGISTRY_IMAGE }}|g" deploy/deployment.template.yml
-          
-
-      - name: Apply ConfigMap and Deployment
-        run: |
-          kubectl apply -f deploy/configmap.template.yml
-          kubectl apply -f deploy/deployment.template.yml
+    # Apply Kubernetes manifests
+    - name: Deploy to AKS
+      run: |
+        kubectl apply -f deploy/configmap.yml
+        kubectl apply -f deploy/secrets.yml
+        kubectl apply -f deploy/deployment.yml
+        kubectl apply -f deploy/service.yml
