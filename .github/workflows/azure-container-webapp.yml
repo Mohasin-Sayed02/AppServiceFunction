@@ -38,8 +38,8 @@ jobs:
     # Build and push Docker image to ACR
     - name: Build and Push Docker Image
       run: |
-        docker build -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/testapp:latest .
-        docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/testapp:latest
+        docker build -t ${{ vars.AZURE_CONTAINER_REGISTRY }}/testapp:latest .
+        docker push ${{ vars.AZURE_CONTAINER_REGISTRY }}/testapp:latest
 
     # Generate ConfigMap and Secrets dynamically using environment variables
     - name: Generate ConfigMap and Secrets
