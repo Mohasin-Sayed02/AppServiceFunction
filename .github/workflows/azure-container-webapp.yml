@@ -56,6 +56,14 @@ jobs:
         envsubst < deploy/secrets.template.yml > deploy/secrets.yml
         cat deploy/secrets.yml
 
+    #Authentication with AKS
+    - name: Set up kubectl
+      uses: azure/aks-set-context@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        cluster-name: ${{ vars.AKS_CLUSTER_NAME }}
+        resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
+
     # Apply Kubernetes manifests
     - name: Deploy to AKS
       run: |
