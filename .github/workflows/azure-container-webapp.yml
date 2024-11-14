@@ -71,7 +71,7 @@ jobs:
 
     #Authentication with AKS
     - name: Set up kubectl
-      uses: azure/aks-set-context@v1
+      uses: azure/k8s-set-context@v4
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         cluster-name: ${{ vars.AKS_CLUSTER_NAME }}
