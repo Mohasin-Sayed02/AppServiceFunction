@@ -67,7 +67,12 @@ jobs:
       run: |
         sed -i "s|<IMAGE_TAG>|${IMAGE_TAG}|g" deploy/deployment.template.yml
         sed -i "s|<CONTAINER_REGISTRY>|${CONTAINER_REGISTRY}|g" deploy/deployment.template.yml
-        
+
+      # Add a manual approval step for Production
+    - name: Manual Approval for Production
+      uses: actions/manual-approval@v1
+      with:
+        reviewers: Mohasin-Sayed02
 
     #Authentication with AKS
     - name: Set up kubectl
